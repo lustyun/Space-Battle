@@ -6,7 +6,7 @@ class Ship {
 		this.name = name;
 	}
 
-    // Attack the other ship
+	// Attack the other ship
 	attack(otherShip) {
 		if (this.hull <= 0 || otherShip.hull <= 0) return;
 
@@ -23,8 +23,8 @@ class Ship {
 			);
 
 		if (otherShip.hull <= 0) {
-			console.log(`%c${otherShip.name} ship is destoryed!`, 'color: red;');
-            console.log("");
+			console.log(`%c${otherShip.name} ship is destoryed!`, "color: red;");
+			console.log("");
 		}
 	}
 }
@@ -51,31 +51,53 @@ const USS_Assembly = new Ship(20, 5, 0.7, "USS Assembly");
 
 let battleOver = false;
 
+// Function to create a promise that resolves when the attack button is pressed
+const waitForAttack = () => {
+	return new Promise((resolve) => {
+		const attack = document.querySelector(".attack-button");
+		attack.onclick = () => {
+			resolve(); // Resolve the promise when the attack button is pressed
+		};
+	});
+};
+
 // Battle until my ship is destroyed or all enemy ships are destroyed
-for (let i = 0; i < alienShips.length; i++) {
-	const alienShip = alienShips[i];
+(async () => {
+	for (let i = 0; i < alienShips.length; i++) {
+		const alienShip = alienShips[i];
 
-	while (USS_Assembly.hull > 0 && alienShip.hull > 0) {
-		USS_Assembly.attack(alienShip);
-		alienShip.attack(USS_Assembly);
+		await waitForAttack(); // Wait for the attack button to be pressed
+		const retreat = document.querySelector(".retreat-button");
+		retreat.onclick = () => {
+			battleOver = true;
+			console.log("%cUSS Assembly has retreated", "color: yellow;");
+		};
 
-		if (USS_Assembly.hull <= 0) {
-			console.log('%cYou Lose.', 'color: red;');
+		if (battleOver) {
+			break;
+		}
+
+		while (USS_Assembly.hull > 0 && alienShip.hull > 0) {
+			USS_Assembly.attack(alienShip);
+			alienShip.attack(USS_Assembly);
+			if (USS_Assembly.hull <= 0) {
+				console.log("%cYou Lose.", "color: red;");
+				battleOver = true;
+				break;
+			}
+		}
+
+		if (battleOver) {
+			break;
+		}
+
+		if (i === alienShips.length - 1) {
+			console.log("%cYou Win.", "color: green;");
 			battleOver = true;
 			break;
 		}
 	}
-
-	if (i === alienShips.length - 1) {
-		console.log('%cYou Win.', 'color: green;');
-		battleOver = true;
-		break;
-	}
-
-	if (battleOver) {
-		break;
-	}
-}
+})();
 
 function getRandomAlienShipName() {
 	const name = [
@@ -96,5 +118,3 @@ function getRandomAlienShipName() {
 	const randomName = name[Math.floor(Math.random() * name.length)];
 	return randomName;
 }
-
-const randomAlienShipName = getRandomAlienShipName();
