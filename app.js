@@ -8,8 +8,8 @@ class Ship {
 
 	// Attack the other ship
 	attack(otherShip) {
-		if (this.hull <= 0 || otherShip.hull <= 0) return;
-
+		if (this.hull <= 0 || otherShip.hull <= 0) return; // incase the attack method is fired by a dead ship, exit function
+		// accuracy condition
 		if (Math.random() < this.accuracy) {
 			otherShip.hull -= this.firepower;
 			console.log(
@@ -21,7 +21,7 @@ class Ship {
 				`${this.name} missed!`,
 				`${otherShip.name} Hull: ${otherShip.hull}`
 			);
-
+		// condition when a single ship is destroyed
 		if (otherShip.hull <= 0) {
 			console.log(`%c${otherShip.name} ship is destoryed!`, "color: red;");
 			console.log("");
@@ -38,12 +38,13 @@ for (let i = 0; i < numberOfShips; i++) {
 	let firepower = Math.floor(Math.random() * 3) + 2;
 	let accuracy = Math.random() * 0.2 + 0.6;
 
+	// Create a new instance
 	const alienShip = new Ship(
 		hull,
 		firepower,
 		accuracy,
 		getRandomAlienShipName()
-	); // Create a new instance
+	); 
 	alienShips.push(alienShip); // Add the instance to the array
 }
 
@@ -76,11 +77,11 @@ const waitForAttack = () => {
 		if (battleOver) {
 			break;
 		}
-
+		// fight a single alien ship
 		while (USS_Assembly.hull > 0 && alienShip.hull > 0) {
 			USS_Assembly.attack(alienShip);
 			alienShip.attack(USS_Assembly);
-			if (USS_Assembly.hull <= 0) {
+			if (USS_Assembly.hull <= 0) { // lose condition
 				console.log("%cYou Lose.", "color: red;");
 				battleOver = true;
 				break;
@@ -90,7 +91,7 @@ const waitForAttack = () => {
 		if (battleOver) {
 			break;
 		}
-
+		// win condition
 		if (i === alienShips.length - 1) {
 			console.log("%cYou Win.", "color: green;");
 			battleOver = true;
@@ -99,6 +100,7 @@ const waitForAttack = () => {
 	}
 })();
 
+// random name for an alien ship
 function getRandomAlienShipName() {
 	const name = [
 		"Zorthak",
